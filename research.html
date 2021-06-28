@@ -13,7 +13,7 @@
 
                 .the-arrow.-left {
                     position: relative;
-                    top: 100px; /*Căn độ cao arrow*/
+                    top: 0px; /*Căn độ cao arrow*/
                     left: 0;
                 }
 
@@ -31,7 +31,7 @@
                     background-color: #999;
                     display: block;
                     height: 1px;
-                    position: absolute;
+                    position: relative;
                     transition: all 0.2s;
                     transition-delay: 0;
                     will-change: transform;
@@ -126,7 +126,7 @@
             const timer = ms => new Promise(res => setTimeout(res, ms))
             async function mouseOver(tag_id) {
                 if (!(shown.includes(tag_id))) {
-                    var c = 6;
+                    var c = 5;
                     for (var i = 1; i < c; i++) {
                         var id = tag_id + i.toString();
                         console.log(id);
@@ -141,62 +141,57 @@
     </head>
     <body>
         <div class="nav">
-            <a id="fullstack" style="color: transparent;" onmouseover="mouseOver('fullstack')" class='animated-arrow' href='https://gem.cot.ai/uploads/upload_8c9678f420780dc17433914a42165c6b.png'>
-                <div id="fullstack1">
-                    <p>Project Planning</p>
+            <a id="research" style="color: transparent;" onmouseover="mouseOver('research')" class='animated-arrow' href='https://gem.cot.ai/uploads/upload_8c9678f420780dc17433914a42165c6b.png'>
+                <div id="research1">
+                    <p>Math AIR</p>
                     <ul>
-                        <li>Scoping & Management</li>
-                        <li>Objectives & Budgets</li>
-                        <li>Metrics & Constraints</li>
-                        <li>Domain Knowledge</li>
-                        <li>Digital Transformation</li>
+                        <li>Vector Spaces</li>
+                        <li>Linear Algebra & Matrix Calculus</li>
+                        <li>Optimization</li>
+                        <li>Probability & Stats.</li>
+                        <li>Info. Theory & Logic</li>
                     </ul>
                 </div>
                 <div class="the-arrow -left">
                     <span class="shaft"></span>
                 </div>
-                <div id="fullstack2">
-                    <p>DataOps</p>
+                <div id="research2">
+                    <p>AI Foundations</p>
                     <ul>
-                        <li>DBs & Data Management</li>
-                        <li>Data Wrangling + Annotation</li>
-                        <li>Privacy, Biases & Generation</li>
-                        <li>System + ML Engineering</li>
+                        <li>(Non)Linear Predictors</li>
+                        <li>CNNs, RNNs, GNNs</li>
+                        <li>Sequence & Attention</li>
+                        <li>Planning, Search & DRL</li>
+                        <li>Genrative Models</li>
+                        <li>Robotics</li>
                     </ul>
                 </div>
                 <div class="the-arrow -left">
                     <span class="shaft"></span>
                 </div>
-                <div id="fullstack3">
-                    <p>Model Engineering</p>
+                <div id="research3">
+                    <p>AI Advanced Topics</p>
                     <ul>
-                        <li>Modelling & Solutions</li>
-                        <li>Model Selection & Training</li>
-                        <li>Debugging, Tuning, Scaling</li>
-                        <li>Continual Eval & Op</li>
+                        <li>Visual Intelligence</li>
+                        <li>Language & Speech</li>
+                        <li>RecSys & Forecast</li>
+                        <li>Reasoning & Decision Making</li>
+                        <li>Autonomous Vehicles</li>
+                        <li>Advanced Robotics</li>
                     </ul>
                 </div>
                 <div class="the-arrow -left">
                     <span class="shaft"></span>
                 </div>
-                <div id="fullstack4">
-                    <p>MLOps</p>
+                <div id="research4">
+                    <p>AI Research</p>
                     <ul>
-                        <li>Package, Deploy, Serve</li>
-                        <li>Validation & Calibration</li>
-                        <li>Monitoring/Maintenance (tracing, updates, rollbacks)</li>
-                        <li>Infra. & System Integration</li>
-                    </ul>
-                </div>
-                <div class="the-arrow -left">
-                    <span class="shaft"></span>
-                </div>
-                <div id="fullstack5">
-                    <p>Biz Integration</p>
-                    <ul>
-                        <li>Data & Biz Analysis</li>
-                        <li>UX & Feedback</li>
-                        <li>Insights Dissemination & Governance</li>
+                        <li>Deep Embeddings</li>
+                        <li>Deep Symbolic AI</li>
+                        <li>Conversational AI</li>
+                        <li>Curious Creative AI</li>
+                        <li>Learn2Reason</li>
+                        <li>Personalized AI & Cobots</li>
                     </ul>
                 </div>
             </a>
