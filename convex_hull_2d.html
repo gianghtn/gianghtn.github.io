@@ -1,108 +1,190 @@
+<!DOCTYPE html>
 <html>
-<head>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
-<center>
-<h1></h1>
-</center>
-
-<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
-<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
-
-<style type="text/css">
-
-        #mynetwork {
-            width: 100%;
-            height: 500px;
-            background-color: #ffffff;
-            border: 1px solid lightgray;
-            position: relative;
-            float: left;
-        }
-
+    <head>
+        <!--<link href="style.css" rel="stylesheet" />-->
+        <meta charset=utf-8 />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui">
+        <title>Convex Hull</title>
+        <style>
+            body { 
+                font: 14px helvetica neue, helvetica, arial, sans-serif;
+            } 
+            #cy {
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.19.0/cytoscape.min.js"></script>
+    </head>
+    <body>
+        <div id="cy"></div>
+        <script>
+            //const { result } = require("underscore");
+            // viết hàm generate cytoscape
+            function generate() {
+                var cy = window.cy = cytoscape({
+                    container: document.getElementById('cy'),
+      
+                    boxSelectionEnabled: false,
         
-
+                    style: [
+                        {
+                            selector: 'node',
+                            css: {
+                                'content': 'data(id)',
+                                'text-valign': 'center',
+                                'text-halign': 'center'
+                            }
+                        },
+                        {
+                            selector: ':parent',
+                            css: {
+                                'text-valign': 'top',
+                                'text-halign': 'center',
+                            }
+                        },
+                        {
+                            selector: 'edge',
+                            css: {
+                                'curve-style': 'bezier',
+                                'target-arrow-shape': 'triangle'
+                            }
+                        }
+                    ],
         
+                    elements: {
+                        nodes: [
 
+                            { data: { id: '0' }, position: { x: 0, y: 300 } },
+                            { data: { id: '1' }, position: { x: 500, y: 400 } },
+                            { data: { id: '2' }, position: { x: 700, y: 900 } },
+                            { data: { id: '3' }, position: { x: 600, y: 600 } },
+                            { data: { id: '4' }, position: { x: 1300, y: 100 } },
+                            { data: { id: '5' }, position: { x: 400, y: 900 } },
+                            { data: { id: '6' }, position: { x: 500, y: 1000 } },
+                            { data: { id: '7' }, position: { x: 700, y: 300 } },
+                            { data: { id: '8' }, position: { x: 600, y: 800 } },
+                            { data: { id: '9' }, position: { x: 1100, y: 900 } },
+                            { data: { id: '10' }, position: { x: 100, y: 500 } },
+                            { data: { id: '11' }, position: { x: 100, y: 100 } },
+                            { data: { id: '12' }, position: { x: 450, y: 150 } },
+                            { data: { id: '13' }, position: { x: 250, y: 400 } },
+                            { data: { id: '14' }, position: { x: 1350, y: 150 } },
+                            { data: { id: '15' }, position: { x: 50, y: 950 } },
+                            { data: { id: '16' }, position: { x: 650, y: 1050 } },
+                            { data: { id: '17' }, position: { x: 550, y: 350 } },
+                            { data: { id: '18' }, position: { x: 300, y: 750 } },
+                            { data: { id: '19' }, position: { x: 150, y: 950 } },
+                            { data: { id: '20' }, position: { x: 450, y: 500 } }
+                        ],
+                        edges: [
+                        ]
+                    },
         
-</style>
-
-</head>
-
-<body>
-<div id = "mynetwork"></div>
-
-
-<script type="text/javascript">
-
-    // initialize global variables.
-    var edges;
-    var nodes;
-    var network; 
-    var container;
-    var options, data;
-
-    
-    // This method is responsible for drawing the graph, returns the drawn network
-    function drawGraph() {
-        var container = document.getElementById('mynetwork');
-        
-        
-
-        // parsing and collecting nodes and edges from the python
-        nodes = new vis.DataSet([{"id": 0, "label": 0, "physics": false, "shape": "dot", "size": 10, "x": -249, "y": -16}, {"id": 1, "label": 1, "physics": false, "shape": "dot", "size": 10, "x": -123, "y": -200}, {"id": 2, "label": 2, "physics": false, "shape": "dot", "size": 10, "x": -151, "y": -161}, {"id": 3, "label": 3, "physics": false, "shape": "dot", "size": 10, "x": -225, "y": 35}, {"id": 4, "label": 4, "physics": false, "shape": "dot", "size": 10, "x": 61, "y": -79}, {"id": 5, "label": 5, "physics": false, "shape": "dot", "size": 10, "x": -231, "y": 160}, {"id": 6, "label": 6, "physics": false, "shape": "dot", "size": 10, "x": 247, "y": -32}, {"id": 7, "label": 7, "physics": false, "shape": "dot", "size": 10, "x": 185, "y": -62}, {"id": 8, "label": 8, "physics": false, "shape": "dot", "size": 10, "x": 122, "y": 112}, {"id": 9, "label": 9, "physics": false, "shape": "dot", "size": 10, "x": 293, "y": 173}, {"id": 10, "label": 10, "physics": false, "shape": "dot", "size": 10, "x": 280, "y": 193}, {"id": 11, "label": 11, "physics": false, "shape": "dot", "size": 10, "x": -186, "y": 100}, {"id": 12, "label": 12, "physics": false, "shape": "dot", "size": 10, "x": -127, "y": -123}, {"id": 13, "label": 13, "physics": false, "shape": "dot", "size": 10, "x": -210, "y": 177}, {"id": 14, "label": 14, "physics": false, "shape": "dot", "size": 10, "x": -269, "y": -67}, {"id": 15, "label": 15, "physics": false, "shape": "dot", "size": 10, "x": 254, "y": 50}, {"id": 16, "label": 16, "physics": false, "shape": "dot", "size": 10, "x": -231, "y": 46}, {"id": 17, "label": 17, "physics": false, "shape": "dot", "size": 10, "x": 127, "y": -120}, {"id": 18, "label": 18, "physics": false, "shape": "dot", "size": 10, "x": 282, "y": 177}, {"id": 19, "label": 19, "physics": false, "shape": "dot", "size": 10, "x": -129, "y": 76}, {"id": 20, "label": 20, "physics": false, "shape": "dot", "size": 10, "x": 86, "y": 120}, {"id": 21, "label": 21, "physics": false, "shape": "dot", "size": 10, "x": 207, "y": 43}, {"id": 22, "label": 22, "physics": false, "shape": "dot", "size": 10, "x": 124, "y": -77}, {"id": 23, "label": 23, "physics": false, "shape": "dot", "size": 10, "x": -106, "y": -90}, {"id": 24, "label": 24, "physics": false, "shape": "dot", "size": 10, "x": -20, "y": 84}, {"id": 25, "label": 25, "physics": false, "shape": "dot", "size": 10, "x": -285, "y": 23}, {"id": 26, "label": 26, "physics": false, "shape": "dot", "size": 10, "x": 93, "y": -188}, {"id": 27, "label": 27, "physics": false, "shape": "dot", "size": 10, "x": -293, "y": 197}, {"id": 28, "label": 28, "physics": false, "shape": "dot", "size": 10, "x": -253, "y": 2}, {"id": 29, "label": 29, "physics": false, "shape": "dot", "size": 10, "x": 121, "y": 173}]);
-        edges = new vis.DataSet([{"from": 27, "to": 25}, {"from": 25, "to": 14}, {"from": 14, "to": 1}, {"from": 1, "to": 26}, {"from": 26, "to": 6}, {"from": 6, "to": 9}, {"from": 9, "to": 10}, {"from": 10, "to": 27}]);
-
-        // adding nodes and edges to the graph
-        data = {nodes: nodes, edges: edges};
-
-        var options = {
-    "configure": {
-        "enabled": false
-    },
-    "edges": {
-        "color": {
-            "inherit": true
-        },
-        "smooth": {
-            "enabled": false,
-            "type": "continuous"
-        }
-    },
-    "interaction": {
-        "dragNodes": true,
-        "hideEdgesOnDrag": false,
-        "hideNodesOnDrag": false
-    },
-    "physics": {
-        "enabled": true,
-        "stabilization": {
-            "enabled": true,
-            "fit": true,
-            "iterations": 1000,
-            "onlyDynamicEdges": false,
-            "updateInterval": 50
-        }
-    }
-};
-        
-        
-
-        
-
-        network = new vis.Network(container, data, options);
-	 
-        
+                    layout: {
+                        name: 'preset',
+                        padding: 5
+                    }
+                });
+                return cy;
+            }
 
 
-        
 
-        return network;
 
-    }
+            function coor_to_index(points, graham_queue) {
+                list = [];
+                for (ele of graham_queue) {
+                    list.push(points.indexOf(ele, 0));
+                }
+                result = []
+                for (let i = 0; i < list.length; i++) {
+                    if (i == list.length - 1) {
+                        result.push([list[i], list[0]]);
+                    }
+                    else {
+                        result.push([list[i], list[i + 1]]);
+                    }
+                }
+                return result;
+            }
 
-    drawGraph();
+            function graham_scan(points_ref) {
+                var points = points_ref.slice();
+                // The enveloppe is the points themselves
+                if (points.length <= 3) return points;
+                
+                // Find the pivot
+                var pivot = points[0];
+                for (var i=0; i<points.length; i++) {
+                if (points[i][1] < pivot[1] || (points[i][1] === pivot[1] && points[i][0] < pivot[0]))
+                    pivot = points[i];
+                }
+            
+                // Attribute an angle to the points
+                for (var i=0; i<points.length; i++) {
+                points[i]._graham_angle = Math.atan2(points[i][1] - pivot[1], points[i][0] - pivot[0]);
+                }
+                points.sort(function(a, b){
+                    return a._graham_angle === b._graham_angle
+                                                    ? a[0] - b[0]
+                                                    : a._graham_angle - b._graham_angle});
+            
+                // Adding points to the result if they "turn left"
+                var result = [points[0]], len=1;
+                for(var i=1; i<points.length; i++){
+                var a = result[len-2],
+                    b = result[len-1],
+                    c = points[i];
+                while (
+                    (len === 1 && b[0] === c[0] && b[1] === c[1]) ||
+                    (len > 1 && (b[0]-a[0]) * (c[1]-a[1]) <= (b[1]-a[1]) * (c[0]-a[0]))) {
+                    len--;
+                    b = a;
+                    a = result[len-2];
+                }
+                result[len++] = c;
+                }
+                result.length = len;
+                //console.log('after: ' + JSON.stringify(points_ref));
+                return result;
+            }
 
-</script>
-</body>
+            function get_coor_from_nodes(cy) {
+                var nodes = cy.filter('node');
+                list = []
+                for (ele of nodes) {
+                    list.push([ele.position().x, ele.position().y]);
+                }
+                return(list);
+            }
+            function update(cy) {
+                var points = get_coor_from_nodes(cy);
+                edges_index = coor_to_index(points, graham_scan(points));
+                cy.remove('edge');
+                for (ele of edges_index) {
+                    edge = {
+                    data: { id: String(ele[0]) + "-" + String(ele[1]), source: String(ele[0]), target: String(ele[1]) }
+                    };
+                    cy.add(edge);
+                }
+                cy.edges('edge').style({
+                    "curve-style": "bezier",
+                    "target-arrow-shape": "none"
+                })
+            }
+            cy = generate();
+            update(cy);
+            // listen to node tab events
+            cy.on('tapend', 'node', function(evt){
+                var node = evt.target;
+                //console.log(Math.floor(Math.random() * 100));
+                update(cy);
+            });
+        </script>
+        <!--<script src="code.js"></script>-->
+    </body>
 </html>
