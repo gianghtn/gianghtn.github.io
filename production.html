@@ -1,197 +1,108 @@
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Arrow Effects + JS</title>
-        <style>
-            * {
-            box-sizing: border-box;
-            }
-            .the-arrow {
-                width: 64px;
-                transition: all 0.2s;
-            }
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
 
-                .the-arrow.-left {
-                    position: relative;
-                    top: 0px; /*Căn độ cao arrow*/
-                    left: 0;
-                }
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
 
-                    .the-arrow.-left > .shaft {
-                        width: 0;
-                        background-color: deeppink;
-                    }
+<style type="text/css">
 
-                .the-arrow.-left2 > .shaft {
-                    width: 0;
-                    background-color: deeppink;
-                }
+        #mynetwork {
+            width: 100%;
+            height: 400px;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
 
-                .the-arrow > .shaft {
-                    background-color: #999;
-                    display: block;
-                    height: 1px;
-                    position: absolute;
-                    transition: all 0.2s;
-                    transition-delay: 0;
-                    will-change: transform;
-                    background-color: saddlebrown;
-                }
+        
 
-                    .the-arrow > .shaft:before, .the-arrow > .shaft:after {
-                        background-color: #999;
-                        content: "";
-                        display: block;
-                        height: 1px;
-                        position: absolute;
-                        top: 0;
-                        right: 0;
-                        transition: all 0.2s;
-                        transition-delay: 0s;
-                        background-color: saddlebrown;
-                    }
+        
 
-                    .the-arrow > .shaft:before {
-                        transform-origin: top right;
-                    }
+        
+</style>
 
-                    .the-arrow > .shaft:after {
-                        transform-origin: bottom right;
-                    }
+</head>
 
-            .animated-arrow {
-                display: inline-block;
-                color: transparent;
-                text-decoration: none;
-                position: relative;
-                transition: all 0.2s;
-                display: flex;
-            }
-
-                .animated-arrow:hover {
-                    color: transparent;
-                }
-
-                    .animated-arrow:hover > .the-arrow.-left > .shaft {
-                        width: 64px;
-                        transition-delay: 0.1s;
-                        background-color: black;
-                    }
-
-                        .animated-arrow:hover > .the-arrow.-left > .shaft:before, .animated-arrow:hover > .the-arrow.-left > .shaft:after {
-                            width: 8px;
-                            transition-delay: 0.1s;
-                            background-color: black;
-                        }
-
-                        .animated-arrow:hover > .the-arrow.-left > .shaft:before {
-                            transform: rotate(40deg);
-                        }
-
-                        .animated-arrow:hover > .the-arrow.-left > .shaft:after {
-                            transform: rotate(-40deg);
-                        }
+<body>
+<div id = "mynetwork"></div>
 
 
+<script type="text/javascript">
 
-            .hide {
-                display: none;
-            }
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
 
-            .nav {
-                /*background-color: white;*/
-                list-style-type: none;
-                text-align: center;
-                margin: 0;
-                padding: 0;
-                display: flex;
-            }
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
 
-                .nav div {
-                    display: inline-block;
-                    /*border: 10px;
-                    border-color: pink;*/
-                }
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"borderWidth": 2, "borderWidthSelected": 3, "color": "#00ff00", "group": "0", "id": "MATH4DEV", "label": "MATH4DEV", "physics": true, "shape": "dot", "size": 30, "x": 0, "y": 200}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "#ffff00", "group": "1", "id": "PRACTICAL ML", "label": "PRACTICAL ML", "physics": true, "shape": "dot", "size": 30, "x": 200, "y": 200}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "#ff8000", "group": "2", "id": "SPECIALIZED ML", "label": "SPECIALIZED ML", "physics": true, "shape": "dot", "size": 30, "x": 400, "y": 200}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "#ff0000", "group": "3", "id": "PRODUCTION ML", "label": "PRODUCTION ML", "physics": true, "shape": "dot", "size": 30, "x": 600, "y": 200}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 0, "id": "Linear Algebra \u0026 Matrix Calculus", "label": "Linear Algebra \u0026 Matrix Calculus", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 0, "id": "Numerical Methods \u0026 Optimization", "label": "Numerical Methods \u0026 Optimization", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 0, "id": "Probability \u0026 Statistics", "label": "Probability \u0026 Statistics", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 1, "id": "(Non)Linear Predictors", "label": "(Non)Linear Predictors", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 1, "id": "CNNs, RNNs, GNNs", "label": "CNNs, RNNs, GNNs", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 1, "id": "Sequence \u0026 Attention", "label": "Sequence \u0026 Attention", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 1, "id": "DRL \u0026 Learning2Plan", "label": "DRL \u0026 Learning2Plan", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 1, "id": "ML with Small Data", "label": "ML with Small Data", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 1, "id": "Robotics", "label": "Robotics", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 2, "id": "Visual, Language \u0026 Speech", "label": "Visual, Language \u0026 Speech", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 2, "id": "Conversational AI \u0026 RecSys", "label": "Conversational AI \u0026 RecSys", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 2, "id": "Forecast \u0026 Decision Making", "label": "Forecast \u0026 Decision Making", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 2, "id": "Generative ML \u0026 Creative AI", "label": "Generative ML \u0026 Creative AI", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 2, "id": "Edge AI \u0026 Model Compression", "label": "Edge AI \u0026 Model Compression", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 2, "id": "Autonomous Cars \u0026 Cobots", "label": "Autonomous Cars \u0026 Cobots", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 3, "id": "Project Planning", "label": "Project Planning", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 3, "id": "DataOps \u0026 MLOps", "label": "DataOps \u0026 MLOps", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 3, "id": "System Integration", "label": "System Integration", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 3, "id": "Business Integration", "label": "Business Integration", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "directed": true, "group": 3, "id": "MVPs \u0026 Spinoffs", "label": "MVPs \u0026 Spinoffs", "physics": true, "shape": "dot", "size": 20}]);
+        edges = new vis.DataSet([{"arrows": "to", "from": "MATH4DEV", "length": 200, "to": "PRACTICAL ML", "width": 3}, {"arrows": "to", "from": "PRACTICAL ML", "length": 200, "to": "SPECIALIZED ML", "width": 3}, {"arrows": "to", "from": "SPECIALIZED ML", "length": 200, "to": "PRODUCTION ML", "width": 3}, {"arrows": "to", "color": "lightgrey", "from": "Linear Algebra \u0026 Matrix Calculus", "length": 100, "to": "MATH4DEV", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Numerical Methods \u0026 Optimization", "length": 100, "to": "MATH4DEV", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Probability \u0026 Statistics", "length": 100, "to": "MATH4DEV", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "(Non)Linear Predictors", "length": 100, "to": "PRACTICAL ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "CNNs, RNNs, GNNs", "length": 100, "to": "PRACTICAL ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Sequence \u0026 Attention", "length": 100, "to": "PRACTICAL ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "DRL \u0026 Learning2Plan", "length": 100, "to": "PRACTICAL ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "ML with Small Data", "length": 100, "to": "PRACTICAL ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Robotics", "length": 100, "to": "PRACTICAL ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Visual, Language \u0026 Speech", "length": 100, "to": "SPECIALIZED ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Conversational AI \u0026 RecSys", "length": 100, "to": "SPECIALIZED ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Forecast \u0026 Decision Making", "length": 100, "to": "SPECIALIZED ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Generative ML \u0026 Creative AI", "length": 100, "to": "SPECIALIZED ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Edge AI \u0026 Model Compression", "length": 100, "to": "SPECIALIZED ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Autonomous Cars \u0026 Cobots", "length": 100, "to": "SPECIALIZED ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Project Planning", "length": 100, "to": "PRODUCTION ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "DataOps \u0026 MLOps", "length": 100, "to": "PRODUCTION ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "System Integration", "length": 100, "to": "PRODUCTION ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Business Integration", "length": 100, "to": "PRODUCTION ML", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "MVPs \u0026 Spinoffs", "length": 100, "to": "PRODUCTION ML", "width": 1}]);
 
-                .nav:hover + .hide {
-                    display: block;
-                }
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
 
-            .hover-me:hover + nav {
-                display: block;
-            }
-        </style>
-        <script>
-            let shown = new Array();
-            const timer = ms => new Promise(res => setTimeout(res, ms))
-            async function mouseOver(tag_id) {
-                if (!(shown.includes(tag_id))) {
-                    var c = 5;
-                    for (var i = 1; i < c; i++) {
-                        var id = tag_id + i.toString();
-                        console.log(id);
-                        document.getElementById(id).style.color = "black";
-                        document.getElementById(id).style.backgroundColor = "lightpink";
-                        await timer(1000);
-                    }
-                }
-                shown.push(tag_id);
-            }
-        </script>
-    </head>
-    <body>
-        <div class="nav">
-            <a id="production" onmouseover="mouseOver('production')" class='animated-arrow' href='https://gem.cot.ai/uploads/upload_66f246000e00ac0716958203076f4351.png'>
-                <div id="production1">
-                    <p>Math4Dev</p>
-                    <ul>
-                        <li>Linear Algebra & Matrix Calculus</li>
-                        <li>Numerical Methods & Optimization</li>
-                        <li>Probability & Stats.</li>
-                    </ul>
-                </div>
-                <div class="the-arrow -left">
-                    <span class="shaft"></span>
-                </div>
-                <div id="production2">
-                    <p>Practical ML</p>
-                    <ul>
-                        <li>(Non)Linear Predictors</li>
-                        <li>CNNs, RNNs, GNNs</li>
-                        <li>Sequence & Attention</li>
-                        <li>DRL & Learning2Plan</li>
-                        <li>ML with Small Data</li>
-                        <li>Robotics</li>
-                    </ul>
-                </div>
-                <div class="the-arrow -left">
-                    <span class="shaft"></span>
-                </div>
-                <div id="production3">
-                    <p>Specialized ML</p>
-                    <ul>
-                        <li>Visual, Language & Speech</li>
-                        <li>Conversational AI & RecSys</li>
-                        <li>Forecast & Decision Making</li>
-                        <li>Generative ML & Creative AI</li>
-                        <li>Edge AI & Model Compression</li>
-                        <li>Autonomous Cars & Cobots</li>
-                    </ul>
-                </div>
-                <div class="the-arrow -left">
-                    <span class="shaft"></span>
-                </div>
-                <div id="production4">
-                    <p>Production ML</p>
-                    <ul>
-                        <li>Project Planning</li>
-                        <li>DataOps & MLOps</li>
-                        <li>System Integration</li>
-                        <li>Business Integration</li>
-                        <li>MVPs & Spin-offs</li>
-                    </ul>
-                </div>
-            </a>
-        </div>
-    </body>
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": false,
+            "type": "continuous"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+
+
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
 </html>
