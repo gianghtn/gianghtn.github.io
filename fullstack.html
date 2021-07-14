@@ -1,205 +1,108 @@
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Arrow Effects + JS</title>
-        <style>
-            * {
-            box-sizing: border-box;
-            }
-            .the-arrow {
-                width: 64px;
-                transition: all 0.2s;
-            }
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
 
-                .the-arrow.-left {
-                    position: relative;
-                    top: 100px; /*Căn độ cao arrow*/
-                    left: 0;
-                }
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
 
-                    .the-arrow.-left > .shaft {
-                        width: 0;
-                        background-color: deeppink;
-                    }
+<style type="text/css">
 
-                .the-arrow.-left2 > .shaft {
-                    width: 0;
-                    background-color: deeppink;
-                }
+        #mynetwork {
+            width: 100%;
+            height: 400px;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
 
-                .the-arrow > .shaft {
-                    background-color: #999;
-                    display: block;
-                    height: 1px;
-                    position: absolute;
-                    transition: all 0.2s;
-                    transition-delay: 0;
-                    will-change: transform;
-                    background-color: saddlebrown;
-                }
+        
 
-                    .the-arrow > .shaft:before, .the-arrow > .shaft:after {
-                        background-color: #999;
-                        content: "";
-                        display: block;
-                        height: 1px;
-                        position: absolute;
-                        top: 0;
-                        right: 0;
-                        transition: all 0.2s;
-                        transition-delay: 0s;
-                        background-color: saddlebrown;
-                    }
+        
 
-                    .the-arrow > .shaft:before {
-                        transform-origin: top right;
-                    }
+        
+</style>
 
-                    .the-arrow > .shaft:after {
-                        transform-origin: bottom right;
-                    }
+</head>
 
-            .animated-arrow {
-                display: inline-block;
-                color: transparent;
-                text-decoration: none;
-                position: relative;
-                transition: all 0.2s;
-                display: flex;
-            }
-
-                .animated-arrow:hover {
-                    color: transparent;
-                }
-
-                    .animated-arrow:hover > .the-arrow.-left > .shaft {
-                        width: 64px;
-                        transition-delay: 0.1s;
-                        background-color: black;
-                    }
-
-                        .animated-arrow:hover > .the-arrow.-left > .shaft:before, .animated-arrow:hover > .the-arrow.-left > .shaft:after {
-                            width: 8px;
-                            transition-delay: 0.1s;
-                            background-color: black;
-                        }
-
-                        .animated-arrow:hover > .the-arrow.-left > .shaft:before {
-                            transform: rotate(40deg);
-                        }
-
-                        .animated-arrow:hover > .the-arrow.-left > .shaft:after {
-                            transform: rotate(-40deg);
-                        }
+<body>
+<div id = "mynetwork"></div>
 
 
+<script type="text/javascript">
 
-            .hide {
-                display: none;
-            }
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
 
-            .nav {
-                /*background-color: white;*/
-                list-style-type: none;
-                text-align: center;
-                margin: 0;
-                padding: 0;
-                display: flex;
-            }
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
 
-                .nav div {
-                    display: inline-block;
-                    /*border: 10px;
-                    border-color: pink;*/
-                }
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"borderWidth": 2, "borderWidthSelected": 3, "color": "#00ff00", "group": "0", "id": "PROJECT PLANNING", "label": "PROJECT PLANNING", "physics": true, "shape": "dot", "size": 30, "x": 0, "y": 200}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "#ffff00", "group": "1", "id": "DATAOPS", "label": "DATAOPS", "physics": true, "shape": "dot", "size": 30, "x": 200, "y": 200}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "#ff8000", "group": "2", "id": "MODEL ENGINEERING", "label": "MODEL ENGINEERING", "physics": true, "shape": "dot", "size": 30, "x": 400, "y": 200}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "#ff0000", "group": "3", "id": "MLOPS", "label": "MLOPS", "physics": true, "shape": "dot", "size": 30, "x": 600, "y": 200}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "#00ffff", "group": "3", "id": "BIZ INTEGRATION", "label": "BIZ INTEGRATION", "physics": true, "shape": "dot", "size": 30, "x": 800, "y": 200}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 0, "id": "Scoping \u0026 Management", "label": "Scoping \u0026 Management", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 0, "id": "Objectives \u0026 Budget", "label": "Objectives \u0026 Budget", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 0, "id": "Metrics \u0026 Constraints", "label": "Metrics \u0026 Constraints", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 0, "id": "Domain Knowledge", "label": "Domain Knowledge", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 0, "id": "Digital Transformation", "label": "Digital Transformation", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 1, "id": "DBs + Data Management", "label": "DBs + Data Management", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 1, "id": "Data Wrangling + Annotation", "label": "Data Wrangling + Annotation", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 1, "id": "Privacy, Biases \u0026 Generation", "label": "Privacy, Biases \u0026 Generation", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 1, "id": "System + ML Engineering", "label": "System + ML Engineering", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 2, "id": "Modeling \u0026 Solutions", "label": "Modeling \u0026 Solutions", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 2, "id": "Model Selection \u0026 Training", "label": "Model Selection \u0026 Training", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 2, "id": "Debugging, Tuning, Scaling", "label": "Debugging, Tuning, Scaling", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 2, "id": "Continual Eval \u0026 Opt", "label": "Continual Eval \u0026 Opt", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 3, "id": "Package, Deploy, Serve", "label": "Package, Deploy, Serve", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 3, "id": "Validation \u0026 Calibration", "label": "Validation \u0026 Calibration", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 3, "id": "Monitoring \u0026 Maintenance (tracing, update, rollbacks)", "label": "Monitoring \u0026 Maintenance (tracing, update, rollbacks)", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 3, "id": "Infra. \u0026 System Integration", "label": "Infra. \u0026 System Integration", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 4, "id": "Data \u0026 Biz Analysis", "label": "Data \u0026 Biz Analysis", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "group": 4, "id": "UX \u0026 Feedback", "label": "UX \u0026 Feedback", "physics": true, "shape": "dot", "size": 20}, {"borderWidth": 2, "borderWidthSelected": 3, "color": "lightgrey", "directed": true, "group": 4, "id": "Insights Dissemination \u0026 Governance", "label": "Insights Dissemination \u0026 Governance", "physics": true, "shape": "dot", "size": 20}]);
+        edges = new vis.DataSet([{"arrows": "to", "from": "PROJECT PLANNING", "length": 200, "to": "DATAOPS", "width": 3}, {"arrows": "to", "from": "DATAOPS", "length": 200, "to": "MODEL ENGINEERING", "width": 3}, {"arrows": "to", "from": "MODEL ENGINEERING", "length": 200, "to": "MLOPS", "width": 3}, {"arrows": "to", "from": "MLOPS", "length": 200, "to": "BIZ INTEGRATION", "width": 3}, {"arrows": "to", "color": "lightgrey", "from": "Scoping \u0026 Management", "length": 100, "to": "PROJECT PLANNING", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Objectives \u0026 Budget", "length": 100, "to": "PROJECT PLANNING", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Metrics \u0026 Constraints", "length": 100, "to": "PROJECT PLANNING", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Domain Knowledge", "length": 100, "to": "PROJECT PLANNING", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Digital Transformation", "length": 100, "to": "PROJECT PLANNING", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "DBs + Data Management", "length": 100, "to": "DATAOPS", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Data Wrangling + Annotation", "length": 100, "to": "DATAOPS", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Privacy, Biases \u0026 Generation", "length": 100, "to": "DATAOPS", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "System + ML Engineering", "length": 100, "to": "DATAOPS", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Modeling \u0026 Solutions", "length": 100, "to": "MODEL ENGINEERING", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Model Selection \u0026 Training", "length": 100, "to": "MODEL ENGINEERING", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Debugging, Tuning, Scaling", "length": 100, "to": "MODEL ENGINEERING", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Continual Eval \u0026 Opt", "length": 100, "to": "MODEL ENGINEERING", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Package, Deploy, Serve", "length": 100, "to": "MLOPS", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Validation \u0026 Calibration", "length": 100, "to": "MLOPS", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Monitoring \u0026 Maintenance (tracing, update, rollbacks)", "length": 100, "to": "MLOPS", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Infra. \u0026 System Integration", "length": 100, "to": "MLOPS", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Data \u0026 Biz Analysis", "length": 100, "to": "BIZ INTEGRATION", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "UX \u0026 Feedback", "length": 100, "to": "BIZ INTEGRATION", "width": 1}, {"arrows": "to", "color": "lightgrey", "from": "Insights Dissemination \u0026 Governance", "length": 100, "to": "BIZ INTEGRATION", "width": 1}]);
 
-                .nav:hover + .hide {
-                    display: block;
-                }
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
 
-            .hover-me:hover + nav {
-                display: block;
-            }
-        </style>
-        <script>
-            let shown = new Array();
-            const timer = ms => new Promise(res => setTimeout(res, ms))
-            async function mouseOver(tag_id) {
-                if (!(shown.includes(tag_id))) {
-                    var c = 6;
-                    for (var i = 1; i < c; i++) {
-                        var id = tag_id + i.toString();
-                        console.log(id);
-                        document.getElementById(id).style.color = "black";
-                        document.getElementById(id).style.backgroundColor = "lightpink";
-                        await timer(1000);
-                    }
-                }
-                shown.push(tag_id);
-            }
-        </script>
-    </head>
-    <body>
-        <div class="nav">
-            <a id="fullstack" style="color: transparent;" onmouseover="mouseOver('fullstack')" class='animated-arrow' href='https://gem.cot.ai/uploads/upload_8c9678f420780dc17433914a42165c6b.png'>
-                <div id="fullstack1">
-                    <p>Project Planning</p>
-                    <ul>
-                        <li>Scoping & Management</li>
-                        <li>Objectives & Budgets</li>
-                        <li>Metrics & Constraints</li>
-                        <li>Domain Knowledge</li>
-                        <li>Digital Transformation</li>
-                    </ul>
-                </div>
-                <div class="the-arrow -left">
-                    <span class="shaft"></span>
-                </div>
-                <div id="fullstack2">
-                    <p>DataOps</p>
-                    <ul>
-                        <li>DBs & Data Management</li>
-                        <li>Data Wrangling + Annotation</li>
-                        <li>Privacy, Biases & Generation</li>
-                        <li>System + ML Engineering</li>
-                    </ul>
-                </div>
-                <div class="the-arrow -left">
-                    <span class="shaft"></span>
-                </div>
-                <div id="fullstack3">
-                    <p>Model Engineering</p>
-                    <ul>
-                        <li>Modelling & Solutions</li>
-                        <li>Model Selection & Training</li>
-                        <li>Debugging, Tuning, Scaling</li>
-                        <li>Continual Eval & Op</li>
-                    </ul>
-                </div>
-                <div class="the-arrow -left">
-                    <span class="shaft"></span>
-                </div>
-                <div id="fullstack4">
-                    <p>MLOps</p>
-                    <ul>
-                        <li>Package, Deploy, Serve</li>
-                        <li>Validation & Calibration</li>
-                        <li>Monitoring/Maintenance (tracing, updates, rollbacks)</li>
-                        <li>Infra. & System Integration</li>
-                    </ul>
-                </div>
-                <div class="the-arrow -left">
-                    <span class="shaft"></span>
-                </div>
-                <div id="fullstack5">
-                    <p>Biz Integration</p>
-                    <ul>
-                        <li>Data & Biz Analysis</li>
-                        <li>UX & Feedback</li>
-                        <li>Insights Dissemination & Governance</li>
-                    </ul>
-                </div>
-            </a>
-        </div>
-    </body>
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": false,
+            "type": "continuous"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+
+
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
 </html>
